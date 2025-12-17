@@ -15,7 +15,7 @@ Notatboken lar elevene:
 
 Klikk på knappen under for å åpne notatboken direkte i Colab:
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Svein-Tore/colab/blob/main/FOPDT_Interaktiv_Notatbok_undervisning.ipynb)
+[![Åpne i Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Svein-Tore/colab/blob/main/FOPDT_Interaktiv_Notatbok_undervisning.ipynb)
 
 > Elevene trenger ikke GitHub-konto eller Google Drive for å åpne notebooken.
 
