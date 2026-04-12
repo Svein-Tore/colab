@@ -2,4 +2,4 @@ pandas
 numpy
 matplotlib
 ipywidgets
-appmode
+voila
