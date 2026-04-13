@@ -19,7 +19,7 @@ st.markdown("""
 st.title("FOPDT Simulator & Identifikasjon")
 
 # --- 1. Filopplasting ---
-uploaded_file = st.file_uploader("Last opp måledata (.csv)", type="csv")
+uploaded_file = st.file_uploader("Last opp måledata (.csv eller .txt)", type=["csv", "txt"])
 
 if uploaded_file is not None:
     # Les data robust
