@@ -4,41 +4,46 @@ import numpy as np
 import matplotlib.pyplot as plt
 import io
 
-# 1. Konfigurasjon - Maksimal stabilitet
-st.set_page_config(layout="wide", page_title="FOPDT Mobil-Mester")
-st.title("FOPDT Simulator 📱🍕")
+# 1. Konfigurasjon
+st.set_page_config(layout="wide", page_title="FOPDT Simulator")
+st.title("FOPDT Simulator 📱🚀")
 
-# 2. Inndata (Kun tekstfelt for å unngå Axios-feil)
-st.subheader("1. Legg inn måledata")
-st.info("💡 Axios-sikker metode: Åpne CSV-fila på mobilen, kopier innholdet og lim det inn under.")
+# 2. To veier til mål (Fil eller Tekst)
+st.subheader("1. Hent måledata")
+col_in1, col_in2 = st.columns(2)
 
-pasted_data = st.text_area("Lim inn data her (Tid og Nivå):", height=150, placeholder="0,10.5\n1,11.2\n2,12.1...")
+with col_in1:
+    uploaded_file = st.file_uploader("Last opp fil (.csv / .txt)", type=["csv", "txt"])
 
-# Knapp for rask testing
-use_test = st.checkbox("Bruk eksempedata for å teste appen")
+with col_in2:
+    pasted_data = st.text_area("ELLER: Lim inn kolonner her (hvis knappen feiler)", height=100)
 
+# Logikk for å velge kilde
 df = None
-if pasted_data:
-    try:
-        # Leser tekststrengen og finner automatisk ut om det er komma eller semikolon
+try:
+    if uploaded_file is not None:
+        # Prioriterer opplastet fil
+        df = pd.read_csv(uploaded_file, sep=None, engine='python', decimal=',')
+    elif pasted_data:
+        # Bruker tekstfelt hvis ingen fil er lastet opp
         df = pd.read_csv(io.StringIO(pasted_data), sep=None, engine='python', decimal=',')
-    except Exception as e:
-        st.error(f"Klarte ikke å lese teksten. Sjekk formatet! (Feil: {e})")
-elif use_test:
-    t_t = np.linspace(0, 100, 100)
-    y_t = 10 + 5 * (1 - np.exp(-(t_t - 5) / 20)) + np.random.normal(0, 0.05, 100)
-    df = pd.DataFrame({'Tid': t_t, 'Nivå': y_t})
+    elif st.checkbox("Bruk eksempedata for å teste"):
+        t_t = np.linspace(0, 100, 100)
+        y_t = 10 + 5 * (1 - np.exp(-(t_t - 5) / 20)) + np.random.normal(0, 0.05, 100)
+        df = pd.DataFrame({'Tid': t_t, 'Nivå': y_t})
+except Exception as e:
+    st.error(f"Klarte ikke å lese dataene. Sjekk formatet!")
 
 if df is not None:
-    # Henter ut kolonnene (uavhengig av navn)
+    # Henter ut kolonnene
     tid_data = df.iloc[:,0].values
     niva_data = df.iloc[:,1].values
     
-    # --- 3. Auto-estimering for startverdier ---
+    # --- 3. Auto-estimering ---
     y0_est = float(niva_data[0])
     A_est = float(niva_data[-1] - y0_est)
     
-    # --- 4. Kontrollpanel (Stablet for mobil) ---
+    # --- 4. Kontrollpanel ---
     st.subheader("2. Tilpass modell")
     c1, c2 = st.columns(2)
     with c1:
@@ -80,4 +85,4 @@ if df is not None:
         st.latex(r"T_i = \min(T, 4 \cdot (\lambda + L))")
 
 else:
-    st.warning("👆 Lim inn data fra CSV-fila di eller bruk eksempedata-knappen for å starte.")
+    st.info("👆 Velg fil eller lim inn tekst for å starte.")
