@@ -35,13 +35,17 @@ if uploaded_file is not None:
     y0_est = float(niva_data[0])
     A_est = float(niva_data[-1] - y0_est)
     
-    t10 = tid_data[np.where(niva_data > y0_est + 0.10 * A_est)[0][0]] if len(np.where(niva_data > y0_est + 0.10 * A_v)[0]) > 0 else tid_data[0]
-    t85 = tid_data[np.where(niva_data > y0_est + 0.85 * A_est)[0][0]] if len(np.where(niva_data > y0_est + 0.85 * A_v)[0]) > 0 else tid_data[-1]
-    t63 = tid_data[np.where(niva_data > y0_est + 0.63 * A_est)[0][0]] if len(np.where(niva_data > y0_est + 0.63 * A_v)[0]) > 0 else tid_data[-1]
+    # Finn tidspunkter for 10%, 85% og 63%
+    idx10 = np.where(niva_data > y0_est + 0.10 * A_est)[0]
+    idx85 = np.where(niva_data > y0_est + 0.85 * A_est)[0]
+    idx63 = np.where(niva_data > y0_est + 0.63 * A_est)[0]
     
-    L_auto = max(0, float(t10 - 0.05 * (t85 - t10)))
+    t10 = tid_data[idx10[0]] if len(idx10) > 0 else tid_data[0]
+    t85 = tid_data[idx85[0]] if len(idx85) > 0 else tid_data[-1]
+    t63 = tid_data[idx63[0]] if len(idx63) > 0 else tid_data[-1]
+    
+    L_auto = max(0.0, float(t10 - 0.05 * (t85 - t10)))
     T_auto = max(0.1, float(t63 - L_auto))
-
     # --- 3. Sidebar Kontrollpanel ---
     st.sidebar.header("Juster modell")
     A = st.sidebar.slider("Forsterkning (Δy)", 0.0, float(A_est*2), float(A_est), step=0.01)
